@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import './App.css';
 import { useState } from 'react'
 
@@ -30,13 +30,45 @@ import { useState } from 'react'
   }
   ```
 */
+
+/*
+bg-green-600
+bg-red-600
+*/
 export function App() {
   const [checked, setChecked] = useState(false)
-  const [color, setColor] = useState(checked ? 'red' : 'green')
+  const [color, setColor] = useState('green')
+  const [rememberMe, setRememberMe] = useState(true)
+  const [data, setData] = useState({
+    user: localStorage.getItem('user') || '',
+    password: localStorage.getItem('password') || '',
+    otp: localStorage.getItem('otp') || ''
+  })
+
+  function rememberMeHandler(e) {
+    const remember = e.target.checked
+    if (remember) {
+      console.log('Remember me checked')
+    }
+    else {
+      console.log('Remember me unchecked')
+    }
+    setRememberMe(remember)
+  }
 
   function handleSubmit(e) {
     e.preventDefault()
     console.log('Form submitted!')
+    if (rememberMe) {
+      localStorage.setItem('user', data.user)
+      localStorage.setItem('password', data.password)
+      localStorage.setItem('otp', data.otp)
+    } else {
+      localStorage.removeItem('user')
+      localStorage.removeItem('password')
+      localStorage.removeItem('otp')
+    }
+    console.log('Data:', data)
     setChecked(!checked)
     setColor(!checked ? 'red' : 'green')
   }
@@ -76,6 +108,8 @@ export function App() {
                     id="user"
                     name="user"
                     type="text"
+                    defaultValue={data.user}
+                    onChange={(e) => setData({ ...data, user: e.target.value })}
                     autoComplete="user"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
@@ -92,6 +126,8 @@ export function App() {
                     id="password"
                     name="password"
                     type="password"
+                    defaultValue={data.password}
+                    onChange={(e) => setData({ ...data, password: e.target.value })}
                     autoComplete="current-password"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
@@ -108,6 +144,8 @@ export function App() {
                     id="otp"
                     name="otp"
                     type="password"
+                    defaultValue={data.otp}
+                    onChange={(e) => setData({ ...data, otp: e.target.value })}
                     autoComplete="current-otp"
                     required
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
@@ -121,6 +159,8 @@ export function App() {
                     id="remember-me"
                     name="remember-me"
                     type="checkbox"
+                    defaultChecked={rememberMe}
+                    onChange={(e) => rememberMeHandler(e)}
                     className="h-4 w-4 rounded border-gray-300 text-green-600 focus:ring-green-600"
                   />
                   <label htmlFor="remember-me" className="ml-3 block text-sm leading-6 text-gray-900">
