@@ -42,8 +42,11 @@ export function App() {
   const [data, setData] = useState({
     user: localStorage.getItem('user') || '',
     password: localStorage.getItem('password') || '',
-    otp: localStorage.getItem('otp') || ''
+    otp: localStorage.getItem('otp') || '',
+    proxy: localStorage.getItem('proxy') || 'https://proxy.mavs.dev/'
   })
+  const [error, setError] = useState('')
+  const [advanced, setAdvanced] = useState(false)
 
   function rememberMeHandler(e) {
     const remember = e.target.checked
@@ -71,6 +74,7 @@ export function App() {
     console.log('Data:', data)
     setChecked(!checked)
     setColor(!checked ? 'red' : 'green')
+    setError('Item has been deleted.')
   }
 
   return (
@@ -84,6 +88,23 @@ export function App() {
         ```
       */}
       <div className="flex min-h-full flex-1 flex-col justify-center py-12 sm:px-6 lg:px-8">
+        {error && (
+          <div id="toast-danger" class="fixed top-5 right-5 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
+            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+              <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 11.793a1 1 0 1 1-1.414 1.414L10 11.414l-2.293 2.293a1 1 0 0 1-1.414-1.414L8.586 10 6.293 7.707a1 1 0 0 1 1.414-1.414L10 8.586l2.293-2.293a1 1 0 0 1 1.414 1.414L11.414 10l2.293 2.293Z" />
+              </svg>
+              <span class="sr-only">Error icon</span>
+            </div>
+            <div class="ms-3 text-sm font-normal">{error}</div>
+            <button type="button" class="ms-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-danger" aria-label="Close" onClick={(e) => setError('')}>
+              <span class="sr-only">Close</span>
+              <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+              </svg>
+            </button>
+          </div>
+        )}
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <img
             className="mx-auto h-auto w-30"
@@ -154,6 +175,11 @@ export function App() {
               </div>
 
               <div className="flex items-center justify-between">
+              <label class="inline-flex items-center me-5 cursor-pointer">
+                  <input type="checkbox" value="" class="sr-only peer" checked={advanced} onChange={(e) => setAdvanced(e.target.checked)} />
+                  <div class="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                  <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Configuración avanzada</span>
+                </label>
                 <div className="flex items-center">
                   <input
                     id="remember-me"
@@ -167,6 +193,7 @@ export function App() {
                     Recordarme
                   </label>
                 </div>
+                
 
                 {/* <div className="text-sm leading-6">
                   <a href="#" className="font-semibold text-green-600 hover:text-green-500">
@@ -174,15 +201,46 @@ export function App() {
                   </a>
                 </div> */}
               </div>
+              {advanced && (
+                <div>
+                <label htmlFor="otp" className="block text-sm font-medium leading-6 text-gray-900">
+                  {/*
+                  Add a button at the end with a question mark icon that shows a tooltip with the following text:
+                  "The proxy is a CORS proxy that allows you to make requests to other domains from your browser.
+                  This is useful when you want to make requests to a server that doesn't have CORS enabled."
+                  */}
+                  Proxy CORS <span className="text-gray-500" data-tooltip-target="tooltip-cors">[?]</span>
+                </label>
+                <button data-tooltip-target="tooltip-default" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Default tooltip</button>
+
+<div id="tooltip-default" role="tooltip" class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+    Tooltip content
+    <div class="tooltip-arrow" data-popper-arrow></div>
+</div>
+                <div className="mt-2">
+                  <input
+                    id="proxy"
+                    name="proxy"
+                    type="text"
+                    defaultValue={data.proxy}
+                    onChange={(e) => setData({ ...data, otp: e.target.value })}
+                    autoComplete="current-otp"
+                    placeholder='https://proxy.mavs.dev/'
+                    required
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
+                  />
+                </div>
+              </div>
+                )}
 
               <div>
-                  <button
-                    onClick={(e) => { handleSubmit(e) }}
-                    type="submit"
-                    className={`flex w-full justify-center rounded-md bg-${color}-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-${color}-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-${color}-600`}
-                  >
-                    {checked ? 'Check-out' : 'Check-in'}
-                  </button>
+                <button
+                  onClick={(e) => { handleSubmit(e) }}
+                  type="submit"
+                  className={`flex w-full justify-center rounded-md bg-${color}-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-${color}-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-${color}-600`}
+                >
+                  {checked ? 'Check-out' : 'Check-in'}
+                </button>
               </div>
             </form>
 
