@@ -43,7 +43,7 @@ export function App() {
     user: localStorage.getItem('user') || '',
     password: localStorage.getItem('password') || '',
     otp: localStorage.getItem('otp') || '',
-    proxy: localStorage.getItem('proxy') || 'https://proxy.mavs.dev/'
+    backend: localStorage.getItem('backend') || 'https://portal2api.mavs.dev/'
   })
   const [error, setError] = useState('')
   const [advanced, setAdvanced] = useState(false)
@@ -67,12 +67,12 @@ export function App() {
       localStorage.setItem('user', data.user)
       localStorage.setItem('password', data.password)
       localStorage.setItem('otp', data.otp)
-      localStorage.setItem('proxy', data.proxy)
+      localStorage.setItem('backend', data.backend)
     } else {
       localStorage.removeItem('user')
       localStorage.removeItem('password')
       localStorage.removeItem('otp')
-      localStorage.removeItem('proxy')
+      localStorage.removeItem('backend')
     }
     console.log('Data:', data)
     setChecked(!checked)
@@ -206,13 +206,8 @@ export function App() {
               </div>
               {advanced && (
                 <div>
-                  <label htmlFor="proxy" className="block text-sm font-medium leading-6 text-gray-900">
-                    {/*
-                  Add a button at the end with a question mark icon that shows a tooltip with the following text:
-                  "The proxy is a CORS proxy that allows you to make requests to other domains from your browser.
-                  This is useful when you want to make requests to a server that doesn't have CORS enabled."
-                  */}
-                    Proxy CORS <span className="text-gray-500" onClick={(e) => {e.preventDefault();setShowModal(true)}}>[?]</span>
+                  <label htmlFor="backend" className="block text-sm font-medium leading-6 text-gray-900">
+                    Backend URL <span className="text-gray-500" onClick={(e) => {e.preventDefault();setShowModal(true)}}>[?]</span>
                   </label>
                   { showModal && (
                   <div id="default-modal" tabindex="-1" aria-hidden="true" class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
@@ -220,7 +215,7 @@ export function App() {
                       <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                           <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                            ¿Por qué necesito usar un Proxy CORS y que es?
+                            ¿Por qué necesito usar una Backend URL y que es?
                           </h3>
                           <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="default-modal">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
@@ -231,16 +226,13 @@ export function App() {
                         </div>
                         <div class="p-4 md:p-5 space-y-4">
                           <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                            No puedo hacer peticiones al portal si no estoy usando la misma URL que el portal. Por eso, necesito usar un proxy CORS para poder hacer peticiones al portal desde otro dominio diferente.
+                            No puedo hacer peticiones al portal si no estoy usando la misma URL que él. Por eso, necesito usar un backend custom para poder hacer peticiones al portal desde otro dominio diferente. Cambia el Referer que hay en las cabeceras para así evitar el CORS del navegador.
                           </p>
                           <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                            El proxy es un servidor que se encarga de hacer las peticiones por ti, y te devuelve la respuesta. De esta manera, puedes hacer peticiones al portal desde cualquier dominio. En este caso, el proxy por defecto es <code>https://proxy.mavs.dev/</code> porque no quiero usar proxies de terceros.
+                            Además, la API hace todas las peticiones necesarias para fichar seguidas y te devuelve la respuesta. De esta manera, puedes hacer peticiones al portal sin tener que esperar la respuesta de iniciar sesión, el 2FA, hacer click en Fichajes... En este caso, el backend por defecto es <code>https://portal2api.mavs.dev/</code>.
                           </p>
                           <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                            <b>Puedes y debes usar el que quieras.</b> No me hago responsable de lo que pase si usas un proxy de terceros. Si quieres saber más sobre CORS, puedes leer la documentación oficial de Mozilla.
-                          </p>
-                          <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                            Si quieres montar tu propio proxy, en <a href="https://github.com/imjacobclark/cors-container" class="text-green-600 hover:text-green-500">cors-container</a> tienes un ejemplo de como montarte lo mismo que hay en <code>https://proxy.mavs.dev/</code>.
+                            <b>Puedes y debes usar el que quieras.</b> No me hago responsable de lo que pase si usas una API de terceros. Si quieres montarte tu propio backend, en <a href="https://github.com/JMavs/portal2-api" class="text-green-600 hover:text-green-500">portal2-api</a> tienes un ejemplo de como montarte lo mismo que hay en <code>https://portal2api.mavs.dev/</code>.
                           </p>
                         </div>
                         <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -253,13 +245,13 @@ export function App() {
                   )}
                   <div className="mt-2">
                     <input
-                      id="proxy"
-                      name="proxy"
+                      id="backend"
+                      name="backend"
                       type="text"
-                      defaultValue={data.proxy}
+                      defaultValue={data.backend}
                       onChange={(e) => setData({ ...data, otp: e.target.value })}
                       autoComplete="current-otp"
-                      placeholder='https://proxy.mavs.dev/'
+                      placeholder='https://portal2api.mavs.dev/'
                       required
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-green-600 sm:text-sm sm:leading-6"
                     />
