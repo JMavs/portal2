@@ -40,6 +40,7 @@ export function App() {
   const [checked, setChecked] = useState(false)
   const [color, setColor] = useState('green')
   const [rememberMe, setRememberMe] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const [data, setData] = useState({
     user: localStorage.getItem('user') || '',
     password: localStorage.getItem('password') || '',
@@ -61,6 +62,7 @@ export function App() {
 
   function handleSubmit(e) {
     e.preventDefault()
+    setIsLoading(true)
     if (data.token === '') {
       axios.post(data.backend + 'login', {
         user: data.user,
@@ -109,10 +111,14 @@ export function App() {
           setError('Error al hacer check-in/out')
         })
     }
+    setIsLoading(false)
   }
 
   function getChecks() {
-    if (data.token === '') return
+    if (data.token === '') {
+      setIsLoading(false)
+      return
+    }
     axios.get(data.backend + 'clock-ins', {
       headers: {
         'Authorization': data.token
@@ -124,6 +130,7 @@ export function App() {
         setTimeline(clock_ins)
         clock_ins.length % 2 === 0 ? setChecked(false) : setChecked(true)
         setColor(clock_ins.length % 2 === 0 ? 'green' : 'red')
+        setIsLoading(false)
       }
     })
   }
@@ -320,7 +327,15 @@ export function App() {
                   </div>
                 </div>
               )}
-
+              {isLoading && (
+                <div className="flex items-center justify-center">
+                  <svg className="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                  </svg>
+                </div>
+              )}
+              {!isLoading && (
               <div>
                 <button
                   onClick={(e) => { handleSubmit(e) }}
@@ -331,6 +346,7 @@ export function App() {
                   { }
                 </button>
               </div>
+              )}
             </form>
 
             <div className="mt-6">
